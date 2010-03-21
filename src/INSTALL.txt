@@ -1,0 +1,19 @@
+
+I am terribly sorry but at the moment you are on your own...
+
+Here is the command I use with MUMPS
+
+g++ -Os -I. 
+-I /home/ali/cxsc-small/include/ 
+-I /home/ali/glpk-small/include/ 
+-I /home/ali/Ipopt-small/include/coin/ 
+-I /home/ali/Build/Ipopt-3.6.1/Ipopt/src/LinAlg/ 
+-I /home/ali/Build/Ipopt-3.6.1/Ipopt/src/LinAlg/TMatrices/ 
+-I /home/ali/Build/Ipopt-3.6.1/ThirdParty/ASL/solvers/ 
+-I /home/ali/Build/Ipopt-3.6.1/ThirdParty/ASL/ 
+affine.cpp lp_impl.cpp lp_pruning.cpp dag.cpp AmplTNLP.cpp ampl_ipopt.cpp 
+main.cpp /home/ali/Build/Ipopt-3.6.1/ThirdParty/ASL/amplsolver.a 
+-L /home/ali/cxsc-small/lib/ -L /home/ali/glpk-small/lib/ 
+-L /home/ali/Ipopt-small/lib/ 
+-lcxsc -lglpk -lipopt -lgfortran -lpthread -lm 
+-o asol
