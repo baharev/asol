@@ -27,7 +27,6 @@
 #include <sstream>
 #include <string>
 #include "dag_reader.hpp"
-// FIXME forward declaration of error suffices
 #include "utility.hpp"
 
 template <typename T>
@@ -503,17 +502,20 @@ bool PowInt<T>::propagate() {
 
 void skip_text(std::stringstream& in, const char* content, const bool check_content = true) {
 
-	std::string s;
+	std::string s("");
 
-	// FIXME op >> instead of getline?
-	getline(in, s);
-	//in >> s;
+	// TODO Understand why...
+	do {
+		getline(in, s);
 
-	if (!in.good())
-		error("problems with reading from the stream");
+		if (!in.good())
+			error("problems with reading from the stream");
 
-	if ( check_content && (s != content) )
+	} while (s=="");
+
+	if ( check_content && (s != content) ) {
 		error("unexpected content");
+	}
 }
 
 void check_index(int i, int ub) {
@@ -669,7 +671,7 @@ dag<T>::dag(const char* file_name) {
 	for (int i=0; i<num_of_cons; ++i) {
 		int index;
 		in >> index;
-		// FIXME range check
+		check_index(index, num_of_prims);
 		con[i] = tmp + index;
 	}
 
@@ -785,7 +787,7 @@ bool dag<T>::get_constraints(T r[]) {
 
 	for (int i=0; i<n; ++i) {
 
-		r[i] = tmp[con[i]];
+		r[i] = *(con[i]);
 
 		if (!in(0.0, r[i]))
 			to_delete = true;

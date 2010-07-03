@@ -58,6 +58,7 @@ const string double_to_string(const double d)  {
 	return s.str();
 }
 
+// FIXME May be ".nl\r"
 const string chop_extension_nl(const string& file_name) {
 
 	const string::size_type length = file_name.size();

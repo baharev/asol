@@ -40,6 +40,7 @@ void read_nl_file_list(const char* infile, vector<string>& tests) {
 	string line;
 
 	do {
+		// FIXME Is it needed?
 		line.clear();
 		getline(in, line);
 
@@ -52,8 +53,6 @@ void read_nl_file_list(const char* infile, vector<string>& tests) {
 
 	} while ( !in.eof() );
 
-	in.clear();
-	in.close();
 }
 
 void generate_source(const vector<string>& tests) {
@@ -124,6 +123,20 @@ void write_DAG(const vector<string>& tests) {
 
 bool dag_test(const char* file_name);
 
+void run_dag_tests(const vector<string>& tests) {
+
+	const int n = static_cast<int> (tests.size());
+
+	for (int i=0; i<n; ++i) {
+
+		const string problem_name = tests.at(i);
+
+		const string nl_file_name = problem_name + ".nl";
+
+		dag_test(nl_file_name.c_str());
+	}
+}
+
 int main(int argc, char** argv) {
 
 	if (argc != 2)
@@ -137,10 +150,9 @@ int main(int argc, char** argv) {
 
 	//generate_runner(tests);
 
-	write_DAG(tests);
+	//write_DAG(tests);
 
-	// FIXME Extension check! Check \r also
-	dag_test("eco9x16.nl");
+	run_dag_tests(tests);
 
 	return 0;
 }
