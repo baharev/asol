@@ -50,15 +50,15 @@ void interpreter_DAG::w_declarations() {
 	const string problem_name = chop_extension_nl(prob.name());
 
 	out << "problem name: " << problem_name << endl;
-	out << "number of primitives -- t" << endl;
+	out << "number of primitives" << endl;
 	out << prm_sz << endl;
-	out << "number of variables -- v" << endl;
+	out << "number of variables" << endl;
 	out << var_sz << endl;
-	out << "number of constraints -- c" << endl;
+	out << "number of constraints" << endl;
 	out << con_sz << endl;
 	out << "number of nonzeros" << endl;
 	out << nzeros << endl;
-	out << "number of numeric constants -- n" << endl;
+	out << "number of numeric constants" << endl;
 	out << num_sz << endl;
 
 	out << "numeric constant values" << endl;
@@ -70,7 +70,7 @@ void interpreter_DAG::w_declarations() {
 		out << (*itr) << endl;
 	}
 
-	out << "constraint indices in t" << endl;
+	out << "constraint indices in primitives" << endl;
 	for (int i=0; i<con_sz; ++i) {
 		out << prob.constraint_index.at(i) << endl;
 	}
@@ -155,9 +155,10 @@ void interpreter_DAG::w_binary_primitive(const int i, const primitive_rep& b_pri
 	out << arg2 << endl;
 }
 
+// FIXME Rename to primitives
 void interpreter_DAG::w_constraints() {
 
-	out << "constraints" << endl;
+	out << "primitives" << endl;
 
 	const int n = prob.n_primitives();
 
@@ -190,7 +191,7 @@ void interpreter_DAG::w_initial_point() {
 		error("testing requires an initial point");
 	}
 
-	out << "initial point x0" << endl;
+	out << "initial point" << endl;
 
 	for (int i=0; i<n; ++i) {
 		out << prob.initial_point.at(i) << endl;

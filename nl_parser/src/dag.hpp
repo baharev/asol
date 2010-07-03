@@ -507,6 +507,7 @@ void skip_text(std::stringstream& in, const char* content, const bool check_cont
 
 	// FIXME op >> instead of getline?
 	getline(in, s);
+	//in >> s;
 
 	if (!in.good())
 		error("problems with reading from the stream");

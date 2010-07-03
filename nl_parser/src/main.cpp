@@ -122,6 +122,8 @@ void write_DAG(const vector<string>& tests) {
 	}
 }
 
+bool dag_test(const char* file_name);
+
 int main(int argc, char** argv) {
 
 	if (argc != 2)
@@ -136,6 +138,9 @@ int main(int argc, char** argv) {
 	//generate_runner(tests);
 
 	write_DAG(tests);
+
+	// FIXME Extension check! Check \r also
+	dag_test("eco9x16.nl");
 
 	return 0;
 }
