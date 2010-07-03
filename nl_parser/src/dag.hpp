@@ -63,9 +63,9 @@ class dag {
 		bool propagate_all();
 
 		// FIXME Replace with iostream?
-		static T* get_arg(std::stringstream& in, const int index);
-		static void add_unary_primitive(const std::string& op, int i, T* arg);
-		static void add_binary_primitive(const std::string& op, int i, T* arg1, T* arg2);
+		T* get_arg(std::stringstream& in, const int index);
+		void add_unary_primitive(const std::string& op, int i, T* arg);
+		void add_binary_primitive(const std::string& op, int i, T* arg1, T* arg2);
 
 		node<T>** Node;
 		T* var;
@@ -172,6 +172,8 @@ private:
 // Implementation of unary operators
 //------------------------------------
 
+// FIXME Make them inline!
+
 template <typename T>
 void Ln<T>::evaluate() {
 
@@ -193,8 +195,6 @@ void Neg<T>::evaluate()  {
 // Inverse operations of the unary operators
 //-----------------------------------------------------------------------------
 
-// FIXME Replace operator& with Intersect
-
 template <typename T>
 bool Ln<T>::propagate() {
 
@@ -206,7 +206,7 @@ bool Ln<T>::propagate() {
 	if ( Disjoint(x, x_new) )
 		return true;
 	else {
-		x = x & x_new;
+		x = Intersect(x, x_new);
 		return false;
 	}
 }
@@ -222,7 +222,7 @@ bool Exp<T>::propagate() {
 	if ( Disjoint(x, x_new) )
 		return true;
 	else {
-		x = x & x_new;
+		x = Intersect(x, x_new);
 		return false;
 	}
 }
@@ -238,7 +238,7 @@ bool Neg<T>::propagate() {
 	if ( Disjoint(x, x_new) )
 		return true;
 	else {
-		x = x & x_new;
+		x = Intersect(x, x_new);
 		return false;
 	}
 }
@@ -406,14 +406,14 @@ bool Plus<T>::propagate() {
 	if ( Disjoint(x, x_new) )
 		return true;
 	else {
-		x = x & x_new;
+		x = Intersect(x, x_new);
 	}
 
 	const T y_new( z-x );
 	if ( Disjoint(y, y_new) )
 		return true;
 	else {
-		y = y & y_new;
+		y = Intersect(y, y_new);
 	}
 
 	return false;
@@ -431,14 +431,14 @@ bool Minus<T>::propagate() {
 	if ( Disjoint(x, x_new) )
 		return true;
 	else {
-		x = x & x_new;
+		x = Intersect(x, x_new);
 	}
 
 	const T y_new( x-z );
 	if ( Disjoint(y, y_new) )
 		return true;
 	else {
-		y = y & y_new;
+		y = Intersect(y, y_new);
 	}
 
 	return false;
@@ -470,7 +470,7 @@ bool Div<T>::propagate() {
 	if ( Disjoint(x, x_new) )
 		return true;
 	else {
-		x = x & x_new;
+		x = Intersect(x, x_new);
 	}
 
 	return ext_div(y, x, z);
@@ -495,7 +495,7 @@ bool PowInt<T>::propagate() {
 	if ( Disjoint(x, x_new) )
 		return true;
 	else {
-		x = x & x_new;
+		x = Intersect(x, x_new);
 	}
 
 	return false;
@@ -515,20 +515,16 @@ void skip_text(std::stringstream& in, const char* content, const bool check_cont
 		error("unexpected content");
 }
 
-// FIXME Upper should be exclusive (i.e. <; -1 otherwise)
-bool in_range(int i, int lb, int ub) {
+void check_index(int i, int ub) {
 
-	return (lb<=i) && (i<=ub);
+	if ((i<0) || (i>=ub)) {
+		// FIXME Define dbg() with Bug:
+		error("offset is out of range");
+	}
 }
 
 template <typename T>
-T* dag<T>::get_arg(std::stringstream& in, const int index) {
-
-	// FIXME Index check
-	//if (!in_range(index, 0, num_of_prims-1)) {
-		// FIXME Define dbg() with Bug:
-		error("primitive index out of range");
-	//}
+T* dag<T>::get_arg(std::stringstream& in, const int i) {
 
 	char a;
 	in >> a;
@@ -536,10 +532,28 @@ T* dag<T>::get_arg(std::stringstream& in, const int index) {
 	int offset;
 	in >> offset;
 
-	// FIXME Range check: n, v in range [0, num_of_***]
-	// t in [0, i)
-
 	T* arg = 0;
+	int ub = 0;
+
+	if (a == 'n') {
+		ub  = num_of_nums;
+		arg = num;
+	}
+	else if (a == 'v') {
+		ub  = num_of_vars;
+		arg = var;
+	}
+	else if (a == 't') {
+		ub  = i;
+		arg = tmp;
+	}
+	else {
+		error("incorrect argument");
+	}
+
+	check_index(offset, ub);
+
+	arg += offset;
 
 	return arg;
 }
@@ -547,12 +561,52 @@ T* dag<T>::get_arg(std::stringstream& in, const int index) {
 template <typename T>
 void dag<T>::add_unary_primitive(const std::string& op, int i, T* arg) {
 
-	// TODO Find operator ctor by switching on op
+	// *t = f(*arg);
+	T* t = tmp + i;
+
+	if      (op == "exp") {
+		Node[i] = new Exp<T> (t, arg);
+	}
+	else if (op == "log") {
+		Node[i] = new Ln<T>  (t, arg);
+	}
+	else if (op == "-"  ) {
+		Node[i] = new Neg<T> (t, arg);
+	}
+	else {
+		error("implementation not updated properly");
+	}
 }
 
 template <typename T>
 void dag<T>::add_binary_primitive(const std::string& op, int i, T* arg1, T* arg2) {
 
+	// *t = f(*arg1, *arg2);
+	T* t = tmp + i;
+	// TODO Find operator ctor by switching on op
+
+	if     (op == "+") {
+		Node[i] = new Plus<T>  (t, arg1, arg2);
+	}
+	else if (op == "-") {
+		Node[i] = new Minus<T> (t, arg1, arg2);
+	}
+	else if (op == "*") {
+		Node[i] = new Mult<T>  (t, arg1, arg2);
+	}
+	else if (op == "/") {
+		Node[i] = new Div<T>   (t, arg1, arg2);
+	}
+	else if (op == "pow") {
+		// TODO Only the square function is implemented
+		if (*arg2 != T(2.0))
+			error("sorry, only the square function is implemented");
+		error("update implementation");
+		//Node[i] = new PowInt<T>(t, arg1, arg2);
+	}
+	else {
+		error("implementation not updated properly");
+	}
 }
 
 template <typename T>
@@ -633,13 +687,16 @@ dag<T>::dag(const char* file_name) {
 		int index;
 		in >> index;
 
+		if (index != i)
+			error("unexpected error");
+
 		if (arity == 1) {
-			T* arg = get_arg(in, index);
+			T* arg = get_arg(in, i);
 			add_unary_primitive(op, i, arg);
 		}
 		else if (arity == 2) {
-			T* arg1 = get_arg(in, index);
-			T* arg2 = get_arg(in, index);
+			T* arg1 = get_arg(in, i);
+			T* arg2 = get_arg(in, i);
 			add_binary_primitive(op, i, arg1, arg2);
 		}
 		else {
@@ -647,6 +704,21 @@ dag<T>::dag(const char* file_name) {
 		}
 	}
 
+	//--------------------------------------------------------------------------
+
+	// FIXME Make it optional!
+
+	skip_text(in, "initial point");
+
+	for (int i=0; i<num_of_vars; ++i) {
+		double value;
+		in >> value;
+		var[i] = T(value);
+	}
+
+	//--------------------------------------------------------------------------
+
+	skip_text(in, "EOF");
 }
 
 template <typename T>
@@ -666,6 +738,7 @@ dag<T>::~dag() {
 	delete[] num;
 	num = 0;
 
+	// FIXME Update if necessary
 	//delete[] dfv;
 	//dfv = 0;
 	delete[] con;

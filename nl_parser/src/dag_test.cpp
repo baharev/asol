@@ -20,6 +20,17 @@
 //
 //==============================================================================
 
+// A Double class should be implemented with ctor double(double, double)
+double sqr(double ) { return 0; }
+double  ln(double ) { return 0; }
+double exp(double ) { return 0; }
+double sqrt(double ) { return 0; }
+double Inf(double ) { return 0; }
+double Sup(double ) { return 0; }
+bool ext_div(const double, const double, const double ) { return false; }
+bool Disjoint(double, double) { return 0; }
+double Intersect(const double, const double) { return 0; }
+
 #include "dag.hpp"
 
 bool dag_test(const char* file_name) {
