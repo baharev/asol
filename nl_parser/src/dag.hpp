@@ -61,7 +61,6 @@ class dag {
 		void evaluate_all();
 		bool propagate_all();
 
-		// FIXME Replace with iostream?
 		T* get_arg(std::stringstream& in, const int index);
 		void add_unary_primitive(const std::string& op, int i, T* arg);
 		void add_binary_primitive(const std::string& op, int i, T* arg1, T* arg2);
@@ -586,7 +585,6 @@ void dag<T>::add_binary_primitive(const std::string& op, int i, T* arg1, T* arg2
 
 	// *t = f(*arg1, *arg2);
 	T* t = tmp + i;
-	// TODO Find operator ctor by switching on op
 
 	if     (op == "+") {
 		Node[i] = new Plus<T>  (t, arg1, arg2);
