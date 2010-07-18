@@ -968,7 +968,7 @@ const affine operator/(const affine& lhs, const affine& rhs) {
 
   if (V.lb > V.ub)
 	  affine::isValid = false;
-
+  // FIXME
   --affine::max_used_index;
 
   int n = V.n;

@@ -23,20 +23,40 @@
 #include <iostream>
 #include "affine.hpp"
 
-using namespace aa_lib;
 using namespace std;
+using namespace aa_lib;
+
+namespace {
+
+const affine R = affine(1.9858775);
+
+const affine V[] = { affine(0.0), affine(58.39), affine(89.57), affine(18.05)};
+
+const affine k[][4] = {   { affine(0.0), affine(0.0), affine(0.0), affine(0.0)},
+		            { affine(0.0), affine(0.0), affine(694.0825), affine(393.1971)},
+		            { affine(0.0), affine(-149.7978), affine(0.0), affine(6811.3433)},
+		            { affine(0.0), affine(926.2630), affine(1888.8509), affine(0.0)},  };
+
+
+affine Lambda[4][4];
+
+void compute_Lambda(const affine& T) {
+
+	for (int i=1; i<=3; ++i) {
+		for (int j=1; j<=3; ++j) {
+			Lambda[i][j] = V[j]/V[i]*exp(-k[i][j]/(R*T));
+			cout << "Lambda[" << i << "][" << j << "]: " << Lambda[i][j] << endl;
+		}
+	}
+}
+
+}
 
 int main() {
 
-	affine x(2.0, 4.0);
+	affine T(330.0, 380.0);
+	affine x[] = { affine(0.0), affine(0.0,1.0), affine(0.0,1.0), affine(0.0,1.0) };
 
-	affine fx = (x-affine(1.0))/(sqr(x)+affine(2.0));
-
-	cout << fx << endl;
-
-	cout << "Setting range: " << fx.set_range(0.1666, 0.20) << endl;
-
-	cout << fx << endl;
-
+	compute_Lambda(T);
 	return 0;
 }
