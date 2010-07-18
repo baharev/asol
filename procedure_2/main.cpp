@@ -34,5 +34,9 @@ int main() {
 
 	cout << fx << endl;
 
+	cout << "Setting range: " << fx.set_range(0.1666, 0.20) << endl;
+
+	cout << fx << endl;
+
 	return 0;
 }

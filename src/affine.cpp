@@ -19,10 +19,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 //=============================================================================
-//
-// Version: 0.01
-// Last updated on: 20 Mar 2010
-//
 
 #include "affine.hpp"
 #include <cmath>
@@ -179,6 +175,32 @@ void affine::set_bounds(const double l, const double u) {
 
 	value[0] = (ub + lb)/2.0;
 	value[1] = (ub - lb)/2.0;
+}
+
+bool affine::set_range(const double l, const double u) {
+
+	assert(n > 2);
+	assert(nmax >= n);
+	assert(lb <= ub);
+	assert(index[0] == 0);
+
+	if (!isValid)
+		error("set_range() called when state is invalid");
+
+    if (l >= u )
+		error("empty or degenerate interval in set_range()");
+
+    if (l > lb)
+    	lb = l;
+
+    if (u < ub)
+    	ub = u;
+
+    // TODO Perhaps propagate?
+
+    isValid = (lb <= ub);
+
+	return (isValid);
 }
 
 //=============================================================================

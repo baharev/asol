@@ -19,10 +19,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 //=============================================================================
-//
-// Version: 0.01
-// Last updated on: 20 Jan 2010
-//
 
 #ifndef __AFFINE_HPP
 #define __AFFINE_HPP
@@ -88,6 +84,8 @@ class affine {
 		affine& operator+=(const affine& );
 
 		void set_bounds(const double lb, const double ub);
+
+		bool set_range(const double lb, const double ub);
 
 		friend const affine reciprocal(const affine& x);
 
