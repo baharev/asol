@@ -829,8 +829,9 @@ void division(const double xl, const double xu, const double yl, const double yu
 
 }
 
-//  Should write operator*(double, affine) and then
-//  affine P(X - c*Y); instead of loop.
+//  FIXME Should use operator*(double, affine) for affine P(X - c*Y) and
+//  eliminate loop
+//  FIXME Handle trivial cases -- constants
 const affine operator/(const affine& lhs, const affine& rhs) {
 
 	if (!affine::isValid)
@@ -842,143 +843,152 @@ const affine operator/(const affine& lhs, const affine& rhs) {
 	assert(lhs.nmax >= lhs.n);
 	assert(rhs.nmax >= rhs.n);
 
+	const int start_index = affine::max_used_index;
+
 	const int size = rhs.nmax + lhs.nmax - 1;
-  affine P(false, size);
 
-  affine Q(reciprocal(rhs));
+	affine P(false, size);
 
-  //cout << "1/y: " << endl << Q << endl;
+	affine Q(reciprocal(rhs));
 
-  int*    pi = P.index;
-  double* pd = P.value;
+	//cout << "1/y: " << endl << Q << endl;
 
-  const int*    xi = lhs.index;
-  const double* xd = lhs.value;
+	int*    pi = P.index;
+	double* pd = P.value;
 
-  const int*    yi = rhs.index;
-  const double* yd = rhs.value;
+	const int*    xi = lhs.index;
+	const double* xd = lhs.value;
 
-  const int* const x_end = xi+lhs.n;
-  const int* const y_end = yi+rhs.n;
+	const int*    yi = rhs.index;
+	const double* yd = rhs.value;
 
-  const int int_max(std::numeric_limits<int>::max());
+	const int* const x_end = xi+lhs.n;
+	const int* const y_end = yi+rhs.n;
 
-  // ??? c = +/- INF or NaN ???
-  double c = (*xd)/(*yd);
+	const int int_max(std::numeric_limits<int>::max());
 
-  ++xi; ++xd;
-  ++yi; ++yd;
+	// TODO c = +/- INF or NaN ???
+	double c = (*xd)/(*yd);
 
-  
-  *pi++ =   0;
-  *pd++ = 0.0;
-
-  int k = 1;
-
-  double rad_p = 0.0;
-
-  while (!((xi == x_end) && (yi == y_end))) {
-
-    assert( k < size);
-
-    int i, j, index;
-
-    if (xi != x_end)
-      i = *xi;
-    else
-      i = int_max;
-
-    if (yi != y_end)
-      j = *yi;
-    else
-      j = int_max;
-  
-    double x_i, y_i;
-
-    if      (i < j) {
-      index = i;
-      x_i = *xd;
-      y_i = 0.0;
-	  ++xi; ++xd;
-    }
-    else if (i > j) {
-      index = j;
-      x_i = 0.0;
-      y_i = *yd;
-      ++yi; ++yd;
-    }
-    else {
-      index = i;
-      x_i = *xd;
-      y_i = *yd;
-	  ++xi; ++xd;
-	  ++yi; ++yd;
-    }
-
-    double p_i = x_i-c*y_i;
-
-	*pi++ = index;
-	*pd++ = p_i;
-
-	rad_p += fabs(p_i);
-
-	++k;
-  }
-
-  // ??? Is this needed ???
-    assert( k <= size);
-
-  P.n = k;
+	++xi; ++xd;
+	++yi; ++yd;
 
 
-  double cY_l = c*rhs.lb;
-  double cY_u = c*rhs.ub;
+	*pi++ =   0;
+	*pd++ = 0.0;
 
-  if (cY_l > cY_u) std::swap(cY_l, cY_u);
+	int k = 1;
 
-  // ??? Should check at other parts ???
-  double lb_p = std::max(-rad_p, lhs.lb - cY_u);
-  double ub_p = std::min( rad_p, lhs.ub - cY_l);
+	double rad_p = 0.0;
 
-  if (lb_p > ub_p) {
-	  affine::isValid = false;
-	  return affine(false);
-  }
+	while (!((xi == x_end) && (yi == y_end))) {
 
-  P.lb = lb_p;
-  P.ub = ub_p;
+		assert( k < size);
 
-  affine V(P*Q);
+		int i, j, index;
 
-  *(V.value) += c;
+		if (xi != x_end)
+			i = *xi;
+		else
+			i = int_max;
 
-  V.lb += c;
+		if (yi != y_end)
+			j = *yi;
+		else
+			j = int_max;
 
-  V.ub += c;
+		double x_i, y_i;
 
-  double lb, ub;
+		if      (i < j) {
+			index = i;
+			x_i = *xd;
+			y_i = 0.0;
+			++xi; ++xd;
+		}
+		else if (i > j) {
+			index = j;
+			x_i = 0.0;
+			y_i = *yd;
+			++yi; ++yd;
+		}
+		else {
+			index = i;
+			x_i = *xd;
+			y_i = *yd;
+			++xi; ++xd;
+			++yi; ++yd;
+		}
 
-  division(lhs.lb, lhs.ub, rhs.lb, rhs.ub, lb, ub);
+		double p_i = x_i-c*y_i;
 
-  if (V.lb < lb)
-	  V.lb = lb;
+		*pi++ = index;
+		*pd++ = p_i;
 
-  if (V.ub > ub)
-	  V.ub = ub;
+		rad_p += fabs(p_i);
 
-  if (V.lb > V.ub)
-	  affine::isValid = false;
-  // FIXME
-  --affine::max_used_index;
+		++k;
+	}
 
-  int n = V.n;
+	assert( k <= size);
 
-  *(V.index+n-2) = affine::max_used_index;
-  *(V.value+n-2) = *(V.value+n-1);
+	P.n = k;
 
-  V.n -= 1;
 
-  return V;
+	double cY_l = c*rhs.lb;
+	double cY_u = c*rhs.ub;
+
+	if (cY_l > cY_u) std::swap(cY_l, cY_u);
+
+	// TODO Should check at other parts ???
+	double lb_p = std::max(-rad_p, lhs.lb - cY_u);
+	double ub_p = std::min( rad_p, lhs.ub - cY_l);
+
+	if (lb_p > ub_p) {
+		affine::isValid = false;
+		return affine(false);
+	}
+
+	P.lb = lb_p;
+	P.ub = ub_p;
+
+	affine V(P*Q);
+
+	*(V.value) += c;
+
+	V.lb += c;
+
+	V.ub += c;
+
+	double lb, ub;
+
+	division(lhs.lb, lhs.ub, rhs.lb, rhs.ub, lb, ub);
+
+	if (V.lb < lb)
+		V.lb = lb;
+
+	if (V.ub > ub)
+		V.ub = ub;
+
+	if (V.lb > V.ub)
+		affine::isValid = false;
+
+	const int new_indices = affine::max_used_index - start_index;
+
+	if (new_indices == 2) { // Condense them!
+
+		--affine::max_used_index;
+
+		int n = V.n;
+
+		V.index[n-2] = affine::max_used_index;
+		const double before_last = V.value[n-2];
+		assert(fabs(before_last) < 1.0e-12);
+		V.value[n-2] = before_last + V.value[n-1];
+
+		V.n -= 1;
+	}
+
+	return V;
 }
 
 const affine ln(const affine& x) {
@@ -1053,15 +1063,15 @@ const affine exp(const affine& x) {
 	assert(x.index[0] == 0);
 	assert(x.nmax >= x.n);
 
-	const int size = x.nmax + 1;
-
-	affine result(false, size);
-
 	const double a = x.lb;
 
 	const double b = x.ub;
 
 	const double e_a = std::exp(a);
+
+	// FIXME Find a better way, deal with degenerate cases (b-a) being tiny
+	if (a==b)
+		return affine(e_a);
 
 	const double e_b = std::exp(b);
 
@@ -1075,6 +1085,10 @@ const affine exp(const affine& x) {
 
 	const int*    const xi = x.index;
 	const double* const xd = x.value;
+
+	const int size = x.nmax + 1;
+
+	affine result(false, size);
 
 	int*    const yi = result.index;
 	double* const yd = result.value;
