@@ -58,7 +58,7 @@ void compute_Lambda(const affine& T) {
 
 }
 
-void example_5() {
+void example___() {
 
 	affine::set_max_used_index(0);
 
@@ -158,6 +158,57 @@ void example_4() {
 		cout << "n: " << z[i].n_elem() << endl;
 		cout << z[i] << endl;
 	}
+
+}
+
+const affine sum_xy(const affine x[], const affine y[]) {
+
+	return x[1]*y[1] + x[1]*y[2] + x[2]*y[2] + x[3]*y[1];
+}
+
+void example_5() {
+
+	affine::set_max_used_index(0);
+
+	affine one(1.0);
+
+	affine x[] = {
+			affine(0.0),
+			affine(0.6, 0.7),
+			affine(0.2, 0.3),
+			affine(0.1, 0.2)
+	};
+
+	affine y[] = {
+			affine(0.0),
+			affine(0.1, 0.4),
+			affine(0.2, 0.4),
+			affine(0.3, 0.5)
+	};
+
+	affine x1, x2, x3, y1, y2, y3;
+
+	affine z = sum_xy(x, y);
+
+	cout << "Initial z" << endl << z << endl;
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	y1 = one - y[2] - y[3];
+	y1.set_range(y[1].inf(), y[1].sup());
+	y2 = y[2];
+	y3 = y[3];
+
+	affine X[] = {affine(0.0), x1, x2, x3};
+	affine Y[] = {affine(0.0), y1, y2, y3};
+
+	z = sum_xy(X, Y);
+
+	cout << "z: " << endl << z << endl;
+
 
 }
 
