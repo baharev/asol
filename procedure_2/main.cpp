@@ -21,6 +21,7 @@
 //==============================================================================
 
 #include <iostream>
+#include <cassert>
 #include "affine.hpp"
 
 using namespace std;
@@ -40,18 +41,84 @@ const affine k[][4] = {   { affine(0.0), affine(0.0), affine(0.0), affine(0.0)},
 
 affine Lambda[4][4];
 
+const affine one(1.0);
+
+const affine zero(0.0);
+
 void compute_Lambda(const affine& T) {
 
 	affine rT = reciprocal(R*T);
-
-	affine dbg1 = -k[1][1]*rT;
-	affine dbg2 = exp(dbg1);
 
 	for (int i=1; i<=3; ++i) {
 		for (int j=1; j<=3; ++j) {
 			Lambda[i][j] = V[j]/V[i]*exp(-k[i][j]*rT);
 			cout << "Lambda[" << i << "][" << j << "]: " << endl;
 			cout <<  Lambda[i][j] << endl;
+		}
+	}
+}
+
+void compute_s(const affine x[], affine s[]) {
+
+	for (int i=1; i<=3; ++i)
+		cout << endl << "x[" << i << "]" << endl << x[i] << endl;
+
+	for (int i=1; i<=3; ++i) {
+
+		s[i] = affine(0.0);
+
+		for (int j=1; j<=3; ++j) {
+
+			s[i] = s[i] + x[j]*Lambda[i][j];
+		}
+	}
+}
+
+void run() {
+
+	affine::set_max_used_index(0);
+
+	affine x[] = { affine(0.0), affine(0.0,1.0), affine(0.0,1.0), affine(0.0,1.0) };
+
+	affine T(330.0, 380.0);
+
+	affine s[] = { affine(0.0), affine(0.0,1.0), affine(0.0,1.0), affine(0.0,1.0) };
+
+	compute_Lambda(T);
+
+	affine sg[4];
+
+	compute_s(x, sg);
+
+	for (int i=1; i<=3; ++i) {
+		const bool ok = s[i].intersect_domain(sg[i].inf(), sg[i].sup());
+		assert(ok);
+		//cout << endl << "s[" << i << "]" << endl << s[i] << endl;
+	}
+
+	affine xg[4];
+
+	for (int j=1; j<=3; ++j) {
+
+		for (int i=1; i<=3; ++i)
+			xg[i] = x[i];
+
+		xg[j] = one;
+
+		for (int i=1; i<=3; ++i) {
+			if (i==j)
+				continue;
+			xg[j] = xg[j] - x[i];
+		}
+
+		xg[j].set_range(x[j].inf(), x[j].sup());
+
+		compute_s(xg, sg);
+
+		for (int i=1; i<=3; ++i) {
+			const bool ok = s[i].intersect_domain(sg[i].inf(), sg[i].sup());
+			assert(ok);
+			cout << endl << "s[" << i << "]" << endl << s[i] << endl;
 		}
 	}
 }
@@ -882,6 +949,9 @@ void example_9() {
 
 int main() {
 
+	run();
+
+	/*
 	example_1();
 
 	example_2();
@@ -899,6 +969,7 @@ int main() {
 	example_8();
 
 	example_9();
+	*/
 
 	return 0;
 }

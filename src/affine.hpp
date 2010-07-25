@@ -87,6 +87,8 @@ class affine {
 
 		bool set_range(const double lb, const double ub);
 
+		bool intersect_domain(const double lb, const double ub);
+
 		friend const affine reciprocal(const affine& x);
 
 		friend const affine mult_const(const double c, const affine& x);

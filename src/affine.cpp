@@ -203,6 +203,44 @@ bool affine::set_range(const double l, const double u) {
 	return (isValid);
 }
 
+bool affine::intersect_domain(const double l, const double u) {
+
+	assert(n == 2);
+	assert(nmax >= n);
+	assert(lb <= ub);
+	assert(index[0] == 0);
+
+	if (!isValid)
+		error("set_range() called when state is invalid");
+
+    if (l >= u )
+		error("empty or degenerate interval in set_range()");
+
+    bool has_changed = false;
+
+    if (l > lb) {
+    	lb = l;
+    	has_changed = true;
+    }
+
+    if (u < ub) {
+    	ub = u;
+    	has_changed = true;
+    }
+
+    isValid = (lb <= ub);
+
+    if (!has_changed || !isValid)
+    	return isValid;
+
+	value[0] = (ub + lb)/2.0;
+	value[1] = (ub - lb)/2.0;
+
+	assert(isValid);
+
+	return isValid;
+}
+
 //=============================================================================
 //
 // "Duplication is Evil"
