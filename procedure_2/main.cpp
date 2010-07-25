@@ -161,11 +161,6 @@ void example_4() {
 
 }
 
-const affine sum_xy(const affine x[], const affine y[]) {
-
-	return x[1]*y[1] + x[1]*y[2] + x[2]*y[2] + x[3]*y[1];
-}
-
 void example_5() {
 
 	affine::set_max_used_index(0);
@@ -188,27 +183,700 @@ void example_5() {
 
 	affine x1, x2, x3, y1, y2, y3;
 
-	affine z = sum_xy(x, y);
-
-	cout << "Initial z" << endl << z << endl;
+	y1 = y[1];
+	y2 = y[2];
+	y3 = y[3];
 
 	x1 = x[1];
 	x2 = x[2];
-	x3 = one - x[1] - x[2];
-	x3.set_range(x[3].inf(), x[3].sup());
+	x3 = x[3];
+
+	affine z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "=========================================================" << endl;
+	cout << "Procedure 2" << endl;
+	cout << "Initial z" << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y1" << endl;
 
 	y1 = one - y[2] - y[3];
 	y1.set_range(y[1].inf(), y[1].sup());
 	y2 = y[2];
 	y3 = y[3];
 
-	affine X[] = {affine(0.0), x1, x2, x3};
-	affine Y[] = {affine(0.0), y1, y2, y3};
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
 
-	z = sum_xy(X, Y);
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
 
-	cout << "z: " << endl << z << endl;
+	cout << "z (x3 y1): " << endl << z << endl;
 
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x2 y1): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x1 y1): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y2" << endl;
+
+	y1 = y[1];
+	y2 = one - y[1] - y[3];
+	y2.set_range(y[2].inf(), y[2].sup());
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x3 y2): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x2 y2): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x1 y2): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y3" << endl;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = one - y[1] - y[2];
+	y3.set_range(y[3].inf(), y[3].sup());
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x3 y3): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x2 y3): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = x1*y1 + x1*y2 + x2*y2 + x3*y1;
+
+	cout << "z (x1 y3): " << endl << z << endl;
+
+}
+
+void example_6() {
+
+	affine::set_max_used_index(0);
+
+	affine one(1.0);
+
+	affine x[] = {
+			affine(0.0),
+			affine(0.6, 0.7),
+			affine(0.2, 0.3),
+			affine(0.1, 0.2)
+	};
+
+	affine y[] = {
+			affine(0.0),
+			affine(0.1, 0.4),
+			affine(0.2, 0.4),
+			affine(0.3, 0.5)
+	};
+
+	affine x1, x2, x3, y1, y2, y3;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = x[3];
+
+	affine z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "=========================================================" << endl;
+	cout << "Procedure 2" << endl;
+	cout << "Initial z" << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y1" << endl;
+
+	y1 = one - y[2] - y[3];
+	y1.set_range(y[1].inf(), y[1].sup());
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y1): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y1): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y1): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y2" << endl;
+
+	y1 = y[1];
+	y2 = one - y[1] - y[3];
+	y2.set_range(y[2].inf(), y[2].sup());
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y2): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y2): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y2): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y3" << endl;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = one - y[1] - y[2];
+	y3.set_range(y[3].inf(), y[3].sup());
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y3): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y3): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y3): " << endl << z << endl;
+
+}
+
+void example_7() {
+
+	affine::set_max_used_index(0);
+
+	affine one(1.0);
+
+	affine x[] = {
+			affine(0.0),
+			affine(0.6, 0.7),
+			affine(0.2, 0.3),
+			affine(0.1, 0.2)
+	};
+
+	affine y[] = {
+			affine(0.0),
+			affine(0.1, 0.4),
+			affine(0.2, 0.4),
+			affine(0.3, 0.5)
+	};
+
+	affine x1, x2, x3, y1, y2, y3;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = x[3];
+
+	affine z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "=========================================================" << endl;
+	cout << "Procedure 2" << endl;
+	cout << "Initial z" << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y1" << endl;
+
+	y1 = one - y[2] - y[3];
+	y1.set_range(y[1].inf(), y[1].sup());
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x3 y1): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x2 y1): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x1 y1): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y2" << endl;
+
+	y1 = y[1];
+	y2 = one - y[1] - y[3];
+	y2.set_range(y[2].inf(), y[2].sup());
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x3 y2): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x2 y2): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x1 y2): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y3" << endl;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = one - y[1] - y[2];
+	y3.set_range(y[3].inf(), y[3].sup());
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x3 y3): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x2 y3): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (one-x2)*y1+(one-x3)*y2;
+
+	cout << "z (x1 y3): " << endl << z << endl;
+
+}
+
+void example_8() {
+
+	affine::set_max_used_index(0);
+
+	affine one(1.0);
+
+	affine x[] = {
+			affine(0.0),
+			affine(0.6, 0.7),
+			affine(0.2, 0.3),
+			affine(0.1, 0.2)
+	};
+
+	affine y[] = {
+			affine(0.0),
+			affine(0.1, 0.3),
+			affine(0.2, 0.4),
+			affine(0.3, 0.5)
+	};
+
+	affine x1, x2, x3, y1, y2, y3;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = x[3];
+
+	affine z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "=========================================================" << endl;
+	cout << "y1 = [0.1, 0.3]" << endl;
+	cout << "=========================================================" << endl;
+
+	cout << "Initial z" << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y1" << endl;
+
+	y1 = one - y[2] - y[3];
+	y1.set_range(y[1].inf(), y[1].sup());
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y1): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y1): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y1): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y2" << endl;
+
+	y1 = y[1];
+	y2 = one - y[1] - y[3];
+	y2.set_range(y[2].inf(), y[2].sup());
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y2): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y2): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y2): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y3" << endl;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = one - y[1] - y[2];
+	y3.set_range(y[3].inf(), y[3].sup());
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y3): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y3): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y3): " << endl << z << endl;
+
+}
+
+void example_9() {
+
+	affine::set_max_used_index(0);
+
+	affine one(1.0);
+
+	affine x[] = {
+			affine(0.0),
+			affine(0.6, 0.7),
+			affine(0.2, 0.3),
+			affine(0.1, 0.2)
+	};
+
+	affine y[] = {
+			affine(0.0),
+			affine(0.3, 0.4),
+			affine(0.2, 0.4),
+			affine(0.3, 0.5)
+	};
+
+	affine x1, x2, x3, y1, y2, y3;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = x[3];
+
+	affine z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "=========================================================" << endl;
+	cout << "y1 = [0.3, 0.4]" << endl;
+	cout << "=========================================================" << endl;
+
+	cout << "Initial z" << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y1" << endl;
+
+	y1 = one - y[2] - y[3];
+	y1.set_range(y[1].inf(), y[1].sup());
+	y2 = y[2];
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y1): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y1): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y1): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y2" << endl;
+
+	y1 = y[1];
+	y2 = one - y[1] - y[3];
+	y2.set_range(y[2].inf(), y[2].sup());
+	y3 = y[3];
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y2): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y2): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y2): " << endl << z << endl;
+
+	cout << "---" << endl;
+	cout << "y3" << endl;
+
+	y1 = y[1];
+	y2 = y[2];
+	y3 = one - y[1] - y[2];
+	y3.set_range(y[3].inf(), y[3].sup());
+
+	x1 = x[1];
+	x2 = x[2];
+	x3 = one - x[1] - x[2];
+	x3.set_range(x[3].inf(), x[3].sup());
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x3 y3): " << endl << z << endl;
+
+	x1 = x[1];
+	x2 = one - x[1] - x[3];
+	x2.set_range(x[2].inf(), x[2].sup());
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x2 y3): " << endl << z << endl;
+
+	x1 = one - x[2] -x[3];
+	x1.set_range(x[1].inf(),x[1].sup());
+	x2 = x[2];
+	x3 = x[3];
+
+	z = (x1+x3)*y1+(x1+x2)*y2;
+
+	cout << "z (x1 y3): " << endl << z << endl;
 
 }
 
@@ -223,6 +891,14 @@ int main() {
 	example_4();
 
 	example_5();
+
+	example_6();
+
+	example_7();
+
+	example_8();
+
+	example_9();
 
 	return 0;
 }
