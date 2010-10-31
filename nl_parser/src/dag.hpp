@@ -602,8 +602,7 @@ void dag<T>::add_binary_primitive(const std::string& op, int i, T* arg1, T* arg2
 		// TODO Only the square function is implemented
 		if (*arg2 != T(2.0))
 			error("sorry, only the square function is implemented");
-		error("update implementation");
-		//Node[i] = new PowInt<T>(t, arg1, arg2);
+		Node[i] = new PowInt<T>(t, arg1, arg2);
 	}
 	else {
 		error("implementation not updated properly");
@@ -779,7 +778,7 @@ bool dag<T>::get_constraints(T r[]) {
 
 	evaluate_all();
 
-	const int n = num_of_vars;
+	const int n = num_of_cons;
 
 	bool to_delete = false;
 

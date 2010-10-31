@@ -24,10 +24,10 @@
 #include <cmath>
 using namespace std;
 
-//double sqr(double ) { return 0; }
+double sqr(double x) { return pow(x, 2); }
 double  ln(double x) { return log(x); }
 //double exp(double ) { return 0; }
-//double sqrt(double ) { return 0; }
+//double sqrt(double x) { return ; }
 
 double Inf(double ) { return 0; }
 double Sup(double ) { return 0; }
