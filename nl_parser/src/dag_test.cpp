@@ -50,9 +50,9 @@ bool dag_test(const char* file_name) {
 
 	const int n = dd.number_of_vars();
 
-	double* const r = new double[n];
+	bool to_delete = false;
 
-	dd.get_constraints(r);
+	const double* r = dd.get_constraints(to_delete);
 
 	for (int i=0; i<n; ++i) {
 

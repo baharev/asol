@@ -43,7 +43,7 @@ class dag {
 
 		const T* get_variables() const { return var; }
 
-		bool get_constraints(T* r);
+		const T* get_constraints(bool& to_delete);
 
 		bool propagate();
 
@@ -73,6 +73,7 @@ class dag {
 		// FIXME dfv is unused
 		//int* dfv;
 		T** con;
+		T* constraint_buffer;
 
 		int num_of_vars;
 		int num_of_nzeros;
@@ -650,6 +651,7 @@ dag<T>::dag(const char* file_name) {
 	//dfv = new int[n_dfvs];
 
 	con = new T*[num_of_cons];
+	constraint_buffer = new T[num_of_cons];
 
 	//--------------------------------------------------------------------------
 
@@ -743,6 +745,9 @@ dag<T>::~dag() {
 	//dfv = 0;
 	delete[] con;
 	con = 0;
+
+	delete[] constraint_buffer;
+	constraint_buffer = 0;
 }
 
 template <typename T>
@@ -774,23 +779,23 @@ void dag<T>::set_variables (const T vars[]) {
 }
 
 template <typename T>
-bool dag<T>::get_constraints(T r[]) {
+const T* dag<T>::get_constraints(bool& to_delete) {
 
 	evaluate_all();
 
 	const int n = num_of_cons;
 
-	bool to_delete = false;
+	to_delete = false;
 
 	for (int i=0; i<n; ++i) {
 
-		r[i] = *(con[i]);
+		constraint_buffer[i] = *(con[i]);
 
-		if (!in(0.0, r[i]))
+		if (!in(0.0, constraint_buffer[i]))
 			to_delete = true;
 	}
 
-	return to_delete;
+	return constraint_buffer;
 }
 
 template <typename T>
