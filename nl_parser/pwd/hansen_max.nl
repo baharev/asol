@@ -1,4 +1,4 @@
-g9 0 2 0 6 20100708 0 4 0 1	# problem hansen_max
+g9 0 2 0 6 20100708 0 1 0 1	# problem hansen_max
  8 6 0 0 6	# vars, constraints, objectives, ranges, eqns
  4 0	# nonlinear constraints, objectives
  0 0	# network constraints: nonlinear, linear
@@ -23,23 +23,23 @@ o16	#-
 o5	#^
 v1	#y
 n2
-C3	#eq_z
+C3	#eq_num
+n0
+C4	#eq_den
+n0
+C5	#eq_z
 o3	#/
-v2	#num
-v3	#den
-C4	#eq_num
-n0
-C5	#eq_den
-n0
+v6	#num
+v7	#den
 x8	# initial guess
 0 1.33073
 1 1
-2 21.2839
-3 4.10157
-4 5.1892
-5 1.33073
-6 1.77084
-7 1
+2 5.1892
+3 1.33073
+4 1.77084
+5 1
+6 21.2839
+7 4.10157
 r	#6 ranges (rhs's)
 4 0
 4 0
@@ -50,41 +50,41 @@ r	#6 ranges (rhs's)
 b	#8 bounds (on variables)
 0 1 10
 0 1 10
-0 15.567 1050
-0 3 202.4
 0 5.189197 328.695
 0 1 100
 0 1 100
 0 1 100
+0 15.567 1050
+0 3 202.4
 k7	#intermediate Jacobian column lengths
 3
 6
-8
+7
 10
-11
+12
 14
 16
 J0 3
 0 0
 1 0
-5 1
+3 1
 J1 2
 0 0
-6 1
+4 1
 J2 2
 1 0
-7 1
-J3 3
-2 0
-3 0
-4 -1
-J4 4
+5 1
+J3 4
 0 -5
-2 1
-5 -14
-7 4
-J5 4
+3 -14
+5 4
+6 1
+J4 4
 1 -1
-3 1
-5 -1
-6 -1
+3 -1
+4 -1
+7 1
+J5 3
+2 -1
+6 0
+7 0

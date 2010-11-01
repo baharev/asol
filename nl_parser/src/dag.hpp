@@ -49,6 +49,8 @@ class dag {
 
 		int number_of_vars() const { return num_of_vars; }
 
+		int number_of_cons() const { return num_of_cons; }
+
 		int number_of_nzeros() const { return num_of_nzeros; }
 
 		~dag();
