@@ -803,13 +803,13 @@ bool dag<T>::propagate() {
 
 	evaluate_all();
 
-	const int n = num_of_vars;
+	const int n = num_of_cons;
 
 	for (int i=0; i<n; ++i) {
-		if (!(in(0.0, tmp[con[i]])))
+		if (! in(0.0, *con[i] ) )
 			return true;
 		else
-			tmp[con[i]] = T(0.0);
+			*con[i] = T(0.0);
 	}
 
 	const bool toDelete = propagate_all();
